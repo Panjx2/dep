@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ticket_id",
+    "customer_name",
+    "email",
+    "product",
+    "priority",
+    "issue_summary",
+    "actions_requested",
+    "needs_human",
+    "confidence"
+  ],
+  "properties": {
+    "ticket_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_name": {
+      "type": ["string", "null"]
+    },
+    "email": {
+      "type": ["string", "null"],
+      "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    },
+    "product": {
+      "type": "string",
+      "enum": ["app", "api", "billing", "other"]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "urgent"]
+    },
+    "issue_summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "actions_requested": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "needs_human": {
+      "type": "boolean"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}
