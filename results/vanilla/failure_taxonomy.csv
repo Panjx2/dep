@@ -1,0 +1,5 @@
+failure_type,count
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 329),4
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 327),3
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 328),2
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 326),1

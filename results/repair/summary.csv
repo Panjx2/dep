@@ -1,0 +1,11 @@
+mode,perturbation_type,parse_rate,schema_compliance,macro_f1
+repair,none,1.0,1.0,0.4285714285714285
+repair,typos,1.0,1.0,0.4285714285714285
+repair,unicode_noise,1.0,1.0,0.4285714285714285
+repair,distractor,1.0,1.0,0.4285714285714285
+repair,prompt_injection,1.0,1.0,0.4285714285714285
+repair,contradictory_instruction,0.0,1.0,0.3428571428571428
+repair,field_aliasing,1.0,1.0,0.4285714285714285
+repair,order_shuffle,1.0,1.0,0.4285714285714285
+repair,format_bait,1.0,1.0,0.4285714285714285
+repair,long_context_overload,1.0,1.0,0.4285714285714285
