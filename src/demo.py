@@ -5,6 +5,7 @@ import csv
 import json
 import logging
 import random
+import time
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -277,15 +278,25 @@ def run(args: argparse.Namespace) -> None:
     )
 
     rows = []
+    total_inference_s = 0.0
+    total_repair_s = 0.0
+    repair_attempts = 0
+    generation_calls = 0
     base = load_jsonl(Path(args.dataset))
     perturb_fn = perturbations()
     logger.info("Loaded %d tickets and %d perturbation types", len(base), len(perturb_fn))
 
     for sample in base:
+        sample_start = time.perf_counter()
         for ptype, fn in perturb_fn.items():
             text = fn(sample["input"], rng)
             prompt = build_prompt(sample["id"], text, schema_str, args.mode)
+
+            gen_start = time.perf_counter()
             output = backend.generate(prompt)
+            total_inference_s += time.perf_counter() - gen_start
+            generation_calls += 1
+
             parsed, parse_error = parse_json_maybe(output)
             errors = [parse_error] if parse_error else []
             if parsed:
@@ -294,7 +305,14 @@ def run(args: argparse.Namespace) -> None:
             repaired = False
             if args.mode == "repair" and errors:
                 repaired = True
+                repair_attempts += 1
+                repair_start = time.perf_counter()
                 output2 = repair_output(backend, output, schema_str, errors)
+                repair_elapsed = time.perf_counter() - repair_start
+                total_repair_s += repair_elapsed
+                total_inference_s += repair_elapsed
+                generation_calls += 1
+
                 parsed2, parse_error2 = parse_json_maybe(output2)
                 errors = [parse_error2] if parse_error2 else []
                 if parsed2:
@@ -316,11 +334,23 @@ def run(args: argparse.Namespace) -> None:
                 }
             )
 
+        logger.info("Finished ticket id=%s in %.2fs", sample["id"], time.perf_counter() - sample_start)
+
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     write_csv(out_dir / "results.csv", rows)
     write_csv(out_dir / "summary.csv", summarize(rows), fieldnames=["mode", "perturbation_type", "parse_rate", "schema_compliance", "macro_f1"])
     write_csv(out_dir / "failure_taxonomy.csv", failure_taxonomy(rows), fieldnames=["failure_type", "count"])
+
+    elapsed = time.perf_counter() - run_start
+    logger.info(
+        "Timing summary: total=%.2fs, generation_calls=%d, generation_time=%.2fs, repair_attempts=%d, repair_time=%.2fs",
+        elapsed,
+        generation_calls,
+        total_inference_s,
+        repair_attempts,
+        total_repair_s,
+    )
     print(f"Wrote results to {out_dir}")
 
 
