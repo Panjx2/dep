@@ -3,13 +3,16 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import random
+import time
 import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
 SCHEMA_PATH = Path(__file__).with_name("schema.json")
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -59,6 +62,10 @@ class LlamaCppBackend(LLMBackend):
             raise ValueError("model_path is required for llama_cpp backend")
         self.llm = Llama(model_path=cfg.model_path, n_ctx=cfg.n_ctx, verbose=False)
         self.cfg = cfg
+        logger.info("Initialized llama_cpp backend model_path=%s n_ctx=%d temperature=%.3f max_tokens=%d", cfg.model_path, cfg.n_ctx, cfg.temperature, cfg.max_tokens)
+        logger.info(
+            "If you see `n_ctx_per_seq < n_ctx_train`, increase --n-ctx (for example to 8192) to use more of the model context window if your hardware allows it."
+        )
 
     def generate(self, prompt: str) -> str:
         response = self.llm(prompt, max_tokens=self.cfg.max_tokens, temperature=self.cfg.temperature)
@@ -256,8 +263,11 @@ def failure_taxonomy(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def run(args: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="[%(levelname)s] %(message)s")
+    run_start = time.perf_counter()
     rng = random.Random(args.seed)
     schema_str = SCHEMA_PATH.read_text()
+    logger.info("Loading dataset=%s mode=%s backend=%s seed=%d", args.dataset, args.mode, args.backend, args.seed)
     backend = build_backend(
         InferenceConfig(
             backend=args.backend,
@@ -269,14 +279,26 @@ def run(args: argparse.Namespace) -> None:
     )
 
     rows = []
+    total_inference_s = 0.0
+    total_repair_s = 0.0
+    repair_attempts = 0
+    generation_calls = 0
     base = load_jsonl(Path(args.dataset))
     perturb_fn = perturbations()
+    total_cases = len(base) * len(perturb_fn)
+    logger.info("Loaded %d tickets and %d perturbation types (%d cases)", len(base), len(perturb_fn), total_cases)
 
     for sample in base:
+        sample_start = time.perf_counter()
         for ptype, fn in perturb_fn.items():
             text = fn(sample["input"], rng)
             prompt = build_prompt(sample["id"], text, schema_str, args.mode)
+
+            gen_start = time.perf_counter()
             output = backend.generate(prompt)
+            total_inference_s += time.perf_counter() - gen_start
+            generation_calls += 1
+
             parsed, parse_error = parse_json_maybe(output)
             errors = [parse_error] if parse_error else []
             if parsed:
@@ -285,7 +307,14 @@ def run(args: argparse.Namespace) -> None:
             repaired = False
             if args.mode == "repair" and errors:
                 repaired = True
+                repair_attempts += 1
+                repair_start = time.perf_counter()
                 output2 = repair_output(backend, output, schema_str, errors)
+                repair_elapsed = time.perf_counter() - repair_start
+                total_repair_s += repair_elapsed
+                total_inference_s += repair_elapsed
+                generation_calls += 1
+
                 parsed2, parse_error2 = parse_json_maybe(output2)
                 errors = [parse_error2] if parse_error2 else []
                 if parsed2:
@@ -307,11 +336,23 @@ def run(args: argparse.Namespace) -> None:
                 }
             )
 
+        logger.info("Finished ticket id=%s in %.2fs", sample["id"], time.perf_counter() - sample_start)
+
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     write_csv(out_dir / "results.csv", rows)
     write_csv(out_dir / "summary.csv", summarize(rows), fieldnames=["mode", "perturbation_type", "parse_rate", "schema_compliance", "macro_f1"])
     write_csv(out_dir / "failure_taxonomy.csv", failure_taxonomy(rows), fieldnames=["failure_type", "count"])
+
+    elapsed = time.perf_counter() - run_start
+    logger.info(
+        "Timing summary: total=%.2fs, generation_calls=%d, generation_time=%.2fs, repair_attempts=%d, repair_time=%.2fs",
+        elapsed,
+        generation_calls,
+        total_inference_s,
+        repair_attempts,
+        total_repair_s,
+    )
     print(f"Wrote results to {out_dir}")
 
 
@@ -326,6 +367,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--out-dir", default="results")
+    parser.add_argument("--verbose", action="store_true", help="Enable INFO logging")
     return parser.parse_args()
 
 
