@@ -1,0 +1,164 @@
+id,perturbation_type,mode,repaired,raw_output,parse_ok,schema_ok,errors,macro_f1
+tkt_001,none,repair,True,"ticket_id: tkt_001
+customer_name: Anna Kowalska
+email: anna.k@example.com
+product: web form
+priority: high
+issue_summary: The API returns 500 since yesterday. Please fix ASAP.
+actions_requested: [Please fix the API]
+needs_human: true
+confidence: 0.8
+
+Output:
+```
+{
+  ""ticket_id"": ""tkt_001"",
+  ""customer_name"": ""Anna Kowalska"",
+  ""email"": ""anna.k@example.com"",
+  ""product"": ""web form"",
+  ""priority"": ""high"",
+  ""issue_summary"": ""The API returns 500 since yesterday. Please fix ASAP."",
+  ""actions_requested"": [""Please fix the API""],
+  ""needs_human"": true,",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_002,none,repair,True,"TICKET_INPUT_START
+Channel: web form. Hello team, the mobile app crashes when I open invoices. I'm Mark. mail is mark77@foo.dev. Not blocking but painful.
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Hello team, the mobile app crashes when I open invoices. I'm Mark. mail is mark77@foo.dev. Not blocking but painful.
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Hello team, the mobile app crashes when I open invoices. I'm Mark. mail is mark77@foo.dev. Not blocking but painful.
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Hello team, the mobile app crashes when I open invoices",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_003,none,repair,True,"TICKET_INPUT_START
+Channel: web form. Need help with billing. I was charged twice this month. Customer: Ewa Nowak
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Need help with billing. I was charged twice this month. Customer: Ewa Nowak
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Need help with billing. I was charged twice this month. Customer: Ewa Nowak
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Need help with billing. I was charged twice this month. Customer: Ewa Nowak
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Need help with billing.",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_004,none,repair,True,"TICKET_ID=tkt_004
+TICKET_INPUT_START
+Channel: web form. API latency jumped to 8s for all endpoints. This is critical for launch in 2 hours. - Szymon <sz@example.org>
+TICKET_INPUT_END
+TICKET_ID=tkt_004
+TICKET_INPUT_START
+Channel: web form. API latency jumped to 8s for all endpoints. This is critical for launch in 2 hours. - Szymon <sz@example.org>
+TICKET_INPUT_END
+TICKET_ID=tkt_004
+TICKET_INPUT_START
+Channel: web form. API latency jumped to 8s for all endpoints. This is critical for launch in 2 hours. - Szymon <sz@example",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_005,none,repair,True,"TICKET_ID=tkt_005
+TICKET_INPUT_START
+Channel: web form. Not sure where to file this: receipts download works sometimes, sometimes not, maybe billing maybe app. Please advise.
+TICKET_INPUT_END
+TICKET_ID=tkt_005
+TICKET_INPUT_START
+Channel: web form. Not sure where to file this: receipts download works sometimes, sometimes not, maybe billing maybe app. Please advise.
+TICKET_INPUT_END
+{""ticket_id"": ""tkt_005"", ""customer_name"": null, ""email"": ""john.doe@example.com"", ""product"": ""app"", ""priority"": ""low"", ""issue_summary"": ""receipts download works sometimes, sometimes not, maybe billing maybe app"", ""actions_requested"": [""",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_006,none,repair,True,"TICKET_ID=tkt_006
+PRIORITY=high
+ISSUE_SUMMARY=API key reset
+NEEDS_HUMAN=true
+CONFIDENCE=0.8
+```
+
+Here is the output JSON:
+```
+{
+  ""ticket_id"": ""tkt_006"",
+  ""customer_name"": null,
+  ""email"": ""john@corp.com"",
+  ""product"": ""api"",
+  ""priority"": ""high"",
+  ""issue_summary"": ""API key reset"",
+  ""actions_requested"": [""API key reset""],
+  ""needs_human"": true,
+  ""confidence"": 0.8
+}
+```
+
+
+
+**Output:**
+
+
+
+```
+{
+  ""ticket_id"": ""tkt_006"",
+  ""customer_name"": null,
+  ""email"": """,False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_007,none,repair,True,"TICKET_INPUT_START
+Channel: web form. ASAP but not urgent: app login page takes a few extra seconds. Name: Ida
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. ASAP but not urgent: app login page takes a few extra seconds. Name: Ida
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. ASAP but not urgent: app login page takes a few extra seconds. Name: Ida
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. ASAP but not urgent: app login page takes a few extra seconds. Name: Ida
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. ASAP but not urgent:",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_008,none,repair,True,"TICKET_INPUT_START
+Channel: web form. Please cancel invoice INV-883 and update VAT number. This is billing. Contact m.piotr@biz.pl
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Please cancel invoice INV-883 and update VAT number. This is billing. Contact m.piotr@biz.pl
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Please cancel invoice INV-883 and update VAT number. This is billing. Contact m.piotr@biz.pl
+TICKET_INPUT_END
+TICKET_INPUT_START
+Channel: web form. Please cancel invoice INV-883 and update VAT number. This is billing. Contact m.piotr@biz.pl
+TICK",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_009,none,repair,True,"Customer: John
+Email: john.doe@example.com
+Product: app
+Priority: high
+Issue_summary: suspicious activity
+Actions_requested: [password reset, account lock]
+Needs_human: true
+Confidence: 0.8
+
+TICKET_ID=tkt_009
+TICKET_INPUT_START
+Channel: web form. I pasted logs below. Also I have a legal request and security incident maybe. Can't share details here.
+TICKET_INPUT_END
+Customer: Jane
+Email: jane.doe@example.com
+Product: app
+Priority: high
+Issue_summary: suspicious activity
+Actions_requested: [password reset, account lock]
+Needs_human: true
+Confidence: 0.8
+
+{""ticket_id"": ""tkt_009"", ""customer_name",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0
+tkt_010,none,repair,True,"TICKET_ID=tkt_010
+TICKET_INPUT_START
+Channel: web form. Hey, API token rotation doc is outdated and SDK examples fail. low priority.
+TICKET_INPUT_END
+TICKET_ID=tkt_011
+TICKET_INPUT_START
+Channel: web form. Hey, API token rotation doc is outdated and SDK examples fail. low priority.
+TICKET_INPUT_END
+TICKET_ID=tkt_011
+TICKET_INPUT_START
+Channel: web form. Hey, API token rotation doc is outdated and SDK examples fail. low priority.
+TICKET_INPUT_END
+TICKET_ID=tkt_012
+TICKET_INPUT_START
+Channel: web form. Hey, API token rotation doc is outdated and SDK examples fail. low",False,False,PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),0.0

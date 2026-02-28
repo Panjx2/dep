@@ -284,7 +284,17 @@ def run(args: argparse.Namespace) -> None:
     repair_attempts = 0
     generation_calls = 0
     base = load_jsonl(Path(args.dataset))
-    perturb_fn = perturbations()
+    perturb_all = perturbations()
+
+    if args.perturbations.strip().lower() == "all":
+        perturb_fn = perturb_all
+    else:
+        wanted = [p.strip() for p in args.perturbations.split(",") if p.strip()]
+        unknown = [p for p in wanted if p not in perturb_all]
+        if unknown:
+            raise ValueError(f"Unknown perturbations: {unknown}. Available: {sorted(perturb_all.keys())}")
+        perturb_fn = {k: perturb_all[k] for k in wanted}
+
     total_cases = len(base) * len(perturb_fn)
     processed_cases = 0
     logger.info("Loaded %d tickets and %d perturbation types (%d cases)", len(base), len(perturb_fn), total_cases)
@@ -390,13 +400,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-path", default=None)
     parser.add_argument("--mode", choices=["vanilla", "repair"], default="repair")
     parser.add_argument("--n-ctx", type=int, default=4096)
-    parser.add_argument("--max-tokens", type=int, default=350)
+    parser.add_argument("--max-tokens", type=int, default=160)
     parser.add_argument("--temperature", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--out-dir", default="results")
     parser.add_argument("--verbose", action="store_true", help="Enable INFO logging")
     parser.add_argument("--log-every", type=int, default=10, help="Emit a progress log every N cases in verbose mode")
     parser.add_argument("--slow-case-threshold-s", type=float, default=30.0, help="Always log cases that take at least this many seconds")
+    parser.add_argument("--perturbations",default="all",help='Comma-separated perturbations to run (e.g. "none,typos"). Use "all" for everything.')
     return parser.parse_args()
 
 

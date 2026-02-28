@@ -48,7 +48,8 @@ python src/demo.py \
   --n-ctx 8192 \
   --temperature 0.2 \
   --verbose \
-  --out-dir results/llama_repair
+  --out-dir results/llama_repair \
+  --perturbations none
 ```
 
 If you see a message like `n_ctx_per_seq (4096) < n_ctx_train (8192)`, it means the run is using the default context window (`--n-ctx 4096`). Increase `--n-ctx` (for example to `8192`) to use more of the model's context window, as long as your machine has enough RAM/VRAM.
