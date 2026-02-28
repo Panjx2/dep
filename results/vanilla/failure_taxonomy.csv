@@ -1,5 +1,16 @@
 failure_type,count
-PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 329),4
-PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 327),3
-PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 328),2
-PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 326),1
+PARSE_ERROR_JSON: Expecting value: line 1 column 1 (char 0),80
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 274),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 289),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 311),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 297),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 313),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 240),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 308),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 295),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 301),8
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 273),3
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 275),2
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 276),1
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 271),1
+PARSE_ERROR_JSON: Extra data: line 2 column 1 (char 269),1
