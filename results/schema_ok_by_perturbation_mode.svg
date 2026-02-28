@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="700">
+<style>text{font-family:Arial,sans-serif;font-size:12px}.title{font-size:22px;font-weight:bold}.axis{stroke:#333;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.legend{font-size:14px}</style>
+<text class="title" x="700.0" y="34" text-anchor="middle">Schema Compliance by Perturbation and Mode</text>
+<line class="axis" x1="90" y1="510" x2="1360" y2="510"/>
+<line class="axis" x1="90" y1="60" x2="90" y2="510"/>
+<line class="grid" x1="90" y1="510.0" x2="1360" y2="510.0"/>
+<text x="80" y="514.0" text-anchor="end">0.00</text>
+<line class="grid" x1="90" y1="397.5" x2="1360" y2="397.5"/>
+<text x="80" y="401.5" text-anchor="end">0.25</text>
+<line class="grid" x1="90" y1="285.0" x2="1360" y2="285.0"/>
+<text x="80" y="289.0" text-anchor="end">0.50</text>
+<line class="grid" x1="90" y1="172.5" x2="1360" y2="172.5"/>
+<text x="80" y="176.5" text-anchor="end">0.75</text>
+<line class="grid" x1="90" y1="60.0" x2="1360" y2="60.0"/>
+<text x="80" y="64.0" text-anchor="end">1.00</text>
+<rect x="109.0" y="510.0" width="44.4" height="0.0" fill="#4C78A8" />
+<rect x="163.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="153.5" y="526" text-anchor="end" transform="rotate(-35 153.5,526)">contradictory_instruction</text>
+<rect x="236.1" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="290.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="280.5" y="526" text-anchor="end" transform="rotate(-35 280.5,526)">distractor</text>
+<rect x="363.1" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="417.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="407.5" y="526" text-anchor="end" transform="rotate(-35 407.5,526)">field_aliasing</text>
+<rect x="490.1" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="544.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="534.5" y="526" text-anchor="end" transform="rotate(-35 534.5,526)">format_bait</text>
+<rect x="617.0" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="671.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="661.5" y="526" text-anchor="end" transform="rotate(-35 661.5,526)">long_context_overload</text>
+<rect x="744.0" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="798.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="788.5" y="526" text-anchor="end" transform="rotate(-35 788.5,526)">none</text>
+<rect x="871.0" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="925.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="915.5" y="526" text-anchor="end" transform="rotate(-35 915.5,526)">order_shuffle</text>
+<rect x="998.0" y="510.0" width="44.4" height="0.0" fill="#4C78A8" />
+<rect x="1052.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="1042.5" y="526" text-anchor="end" transform="rotate(-35 1042.5,526)">prompt_injection</text>
+<rect x="1125.0" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="1179.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="1169.5" y="526" text-anchor="end" transform="rotate(-35 1169.5,526)">typos</text>
+<rect x="1252.0" y="60.0" width="44.4" height="450.0" fill="#4C78A8" />
+<rect x="1306.7" y="60.0" width="44.4" height="450.0" fill="#F58518" />
+<text x="1296.5" y="526" text-anchor="end" transform="rotate(-35 1296.5,526)">unicode_noise</text>
+<rect x="1170.0" y="90.0" width="18.0" height="18.0" fill="#4C78A8" />
+<text class="legend" x="1196" y="104">vanilla</text>
+<rect x="1170.0" y="120.0" width="18.0" height="18.0" fill="#F58518" />
+<text class="legend" x="1196" y="134">repair</text>
+<text x="24" y="285.0" transform="rotate(-90 24,285.0)">schema_ok rate</text>
+</svg>
