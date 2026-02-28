@@ -93,7 +93,7 @@ def set_f1(pred: list[str], gold: list[str]) -> float:
 def parse_json_maybe(text: str) -> tuple[dict[str, Any] | None, str | None]:
     try:
         return json.loads(text), None
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         return None, f"PARSE_ERROR_JSON: {exc}"
 
 
