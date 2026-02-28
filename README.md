@@ -45,9 +45,15 @@ python src/demo.py \
   --backend llama_cpp \
   --model-path ./model/Meta-Llama-3-8B-Instruct.Q2_K.gguf \
   --mode repair \
+  --n-ctx 8192 \
   --temperature 0.2 \
+  --verbose \
   --out-dir results/llama_repair
 ```
+
+If you see a message like `n_ctx_per_seq (4096) < n_ctx_train (8192)`, it means the run is using the default context window (`--n-ctx 4096`). Increase `--n-ctx` (for example to `8192`) to use more of the model's context window, as long as your machine has enough RAM/VRAM.
+
+When `--verbose` is enabled, the script also prints per-ticket timing, periodic progress logs with ETA, and an end-of-run timing summary. You can tune progress frequency with `--log-every` and always log slow cases with `--slow-case-threshold-s`.
 
 ## Metrics computed
 
