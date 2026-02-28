@@ -1,7 +1,5 @@
 # Schema-Strict Information Extraction Under Perturbations
 
-Local-first demo for **Synthetic Data Engineering + structured JSON extraction + robustness evaluation**.
-
 ## What this does
 
 - Extracts support-ticket fields into strict JSON.
@@ -45,7 +43,7 @@ With a local GGUF model via llama.cpp (optional dependency):
 python -m pip install llama-cpp-python
 python src/demo.py \
   --backend llama_cpp \
-  --model-path /path/to/model.gguf \
+  --model-path ./model/Meta-Llama-3-8B-Instruct.Q2_K.gguf \
   --mode repair \
   --temperature 0.2 \
   --out-dir results/llama_repair
@@ -81,8 +79,3 @@ Implemented perturbation tags:
 2. Add repair pipeline (`repair`) and show compliance lift.
 3. Compare robustness drops by perturbation type.
 4. Inspect `failure_taxonomy.csv` to document dominant failure modes.
-
-## Notes
-
-- Default backend `echo` is deterministic and useful for local pipeline testing without loading a model.
-- For portfolio-quality results, run with a local instruct GGUF model and repeat across temperatures/seeds.
