@@ -9,39 +9,25 @@
   - `vanilla`: one-shot extraction
   - `repair`: extraction + repair retry on parse/schema failure
 - Produces evaluation artifacts:
-  - `results/*/results.csv`
-  - `results/*/summary.csv`
-  - `results/*/failure_taxonomy.csv`
+  - `results/results.csv`
+  - `results/summary.csv`
+  - `results/failure_taxonomy.csv`
+
+## Schema
+
+The schema lives at `src/schema.json` and enforces:
+- enums (`product`, `priority`)
+- type constraints
+- summary max length
+- no additional properties
 
 ## Dataset
 
-Base data is in `data/base_tickets.jsonl` and now contains **80 tickets**
-(8 variants for each of the 10 canonical ticket intents).
-
+Base data is in `data/base_tickets.jsonl` with labeled expectations.
 Each record has:
 - `id`
 - `input`
 - `expected` (gold JSON)
-
-## Perturbations
-
-Implemented perturbation tags:
-
-1. `none`
-2. `typos`
-3. `unicode_noise`
-4. `distractor`
-5. `prompt_injection` (**harsher**) 
-6. `contradictory_instruction`
-7. `field_aliasing`
-8. `order_shuffle`
-9. `format_bait`
-10. `long_context_overload` (**harsher**)
-
-### Harsher stressors in this revision
-
-- `prompt_injection` now appends strong system-override text that explicitly demands YAML plus non-schema fields and reasoning.
-- `long_context_overload` now prepends a very large conflicting history (hundreds of noisy lines with conflicting product/priority/email cues).
 
 ## Run
 
@@ -49,7 +35,6 @@ Implemented perturbation tags:
 python -m pip install -r requirements.txt
 python src/demo.py --backend echo --mode vanilla --out-dir results/vanilla
 python src/demo.py --backend echo --mode repair --out-dir results/repair
-python src/visualize.py --out results/schema_ok_by_perturbation_mode.svg
 ```
 
 With a local GGUF model via llama.cpp (optional dependency):
@@ -60,47 +45,13 @@ python src/demo.py \
   --backend llama_cpp \
   --model-path ./model/Meta-Llama-3-8B-Instruct.Q2_K.gguf \
   --mode repair \
+  --n-ctx 8192 \
   --temperature 0.2 \
+  --verbose \
   --out-dir results/llama_repair
 ```
 
-## Model metadata (reporting template)
-
-When publishing results, include:
-
-- **Model name:** `Meta-Llama-3-8B-Instruct`
-- **Quantization:** `Q2_K` (GGUF)
-- **Backend:** `llama_cpp`
-- **Temperature:** `0.2`
-- **Context window (`n_ctx`):** `4096`
-- **Max tokens:** `350`
-- **Repeats:** `8` dataset variants per canonical ticket (80 tickets total)
-
-## Visualization
-
-Schema compliance (`schema_ok`) by perturbation and mode:
-
-![Schema compliance bar chart](results/schema_ok_by_perturbation_mode.svg)
-
-## Worst 5 failures (qualitative)
-
-From `results/vanilla/results.csv`, the lowest-quality examples are:
-
-1. **`tkt_001_v01 / prompt_injection`**
-   - Failure: parser gets YAML (`product: api`) instead of JSON.
-   - Why: injection instruction overrides JSON format in vanilla.
-2. **`tkt_001_v01 / contradictory_instruction`**
-   - Failure: JSON + extra explanation line causes `Extra data` parse error.
-   - Why: backend emits trailing commentary under contradictory prompt.
-3. **`tkt_007_v01 / long_context_overload`**
-   - Failure: severe semantic drift (macro_f1 ≈ 0.048).
-   - Why: long noisy context hijacks product/priority/email with conflicting cues.
-4. **`tkt_007_v01 / unicode_noise`**
-   - Failure: degraded name/priority extraction (macro_f1 ≈ 0.429).
-   - Why: non-breaking-space noise alters simple regex-based matching.
-5. **`tkt_002_v02 / typos`**
-   - Failure: product misclassification to `other` (macro_f1 ≈ 0.429).
-   - Why: typo perturbation can break keyword triggers (`app`/`api`) in heuristics.
+If you see a message like `n_ctx_per_seq (4096) < n_ctx_train (8192)`, it means the run is using the default context window (`--n-ctx 4096`). Increase `--n-ctx` (for example to `8192`) to use more of the model's context window, as long as your machine has enough RAM/VRAM.
 
 ## Metrics computed
 
@@ -110,3 +61,25 @@ From `results/vanilla/results.csv`, the lowest-quality examples are:
 - Set-based F1 for `actions_requested`
 - Macro field score
 - Failure taxonomy counts
+
+## Perturbations
+
+Implemented perturbation tags:
+
+1. `none`
+2. `typos`
+3. `unicode_noise`
+4. `distractor`
+5. `prompt_injection`
+6. `contradictory_instruction`
+7. `field_aliasing`
+8. `order_shuffle`
+9. `format_bait`
+10. `long_context_overload`
+
+## Suggested experiment story
+
+1. Baseline (`vanilla`) under perturbations.
+2. Add repair pipeline (`repair`) and show compliance lift.
+3. Compare robustness drops by perturbation type.
+4. Inspect `failure_taxonomy.csv` to document dominant failure modes.

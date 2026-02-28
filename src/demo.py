@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import logging
 import random
 import re
 from dataclasses import dataclass
@@ -10,6 +11,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 SCHEMA_PATH = Path(__file__).with_name("schema.json")
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -164,6 +166,10 @@ class LlamaCppBackend(LLMBackend):
             raise ValueError("model_path is required for llama_cpp backend")
         self.llm = Llama(model_path=cfg.model_path, n_ctx=cfg.n_ctx, verbose=False)
         self.cfg = cfg
+        logger.info("Initialized llama_cpp backend model_path=%s n_ctx=%d temperature=%.3f max_tokens=%d", cfg.model_path, cfg.n_ctx, cfg.temperature, cfg.max_tokens)
+        logger.info(
+            "If you see `n_ctx_per_seq < n_ctx_train`, increase --n-ctx (for example to 8192) to use more of the model context window if your hardware allows it."
+        )
 
     def generate(self, prompt: str) -> str:
         response = self.llm(prompt, max_tokens=self.cfg.max_tokens, temperature=self.cfg.temperature)
@@ -390,8 +396,10 @@ def failure_taxonomy(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def run(args: argparse.Namespace) -> None:
+    logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="[%(levelname)s] %(message)s")
     rng = random.Random(args.seed)
     schema_str = SCHEMA_PATH.read_text()
+    logger.info("Loading dataset=%s mode=%s backend=%s seed=%d", args.dataset, args.mode, args.backend, args.seed)
     backend = build_backend(
         InferenceConfig(
             backend=args.backend,
@@ -405,6 +413,7 @@ def run(args: argparse.Namespace) -> None:
     rows = []
     base = load_jsonl(Path(args.dataset))
     perturb_fn = perturbations()
+    logger.info("Loaded %d tickets and %d perturbation types", len(base), len(perturb_fn))
 
     for sample in base:
         for ptype, fn in perturb_fn.items():
@@ -465,6 +474,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--out-dir", default="results")
+    parser.add_argument("--verbose", action="store_true", help="Enable INFO logging")
     return parser.parse_args()
 
 
