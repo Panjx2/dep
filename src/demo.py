@@ -264,7 +264,6 @@ def failure_taxonomy(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def run(args: argparse.Namespace) -> None:
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="[%(levelname)s] %(message)s")
-    run_start = time.perf_counter()
     rng = random.Random(args.seed)
     schema_str = SCHEMA_PATH.read_text()
     logger.info("Loading dataset=%s mode=%s backend=%s seed=%d", args.dataset, args.mode, args.backend, args.seed)
@@ -285,8 +284,7 @@ def run(args: argparse.Namespace) -> None:
     generation_calls = 0
     base = load_jsonl(Path(args.dataset))
     perturb_fn = perturbations()
-    total_cases = len(base) * len(perturb_fn)
-    logger.info("Loaded %d tickets and %d perturbation types (%d cases)", len(base), len(perturb_fn), total_cases)
+    logger.info("Loaded %d tickets and %d perturbation types", len(base), len(perturb_fn))
 
     for sample in base:
         sample_start = time.perf_counter()
